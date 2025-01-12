@@ -4,9 +4,11 @@ import de.dertoaster.commands.VisualizerCommand;
 import de.dertoaster.features.trackedLocationVisualizer.TrackedLocationVisualizerJob;
 import de.dertoaster.init.MovecraftDebugCraftDataTags;
 import de.dertoaster.init.MovecraftDebugCraftTypeProperties;
+import de.dertoaster.listener.PlayerListener;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,6 +32,7 @@ public final class MovecraftDebugPlugin extends JavaPlugin {
             VisualizerCommand.register(commands);
         });
 
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
 
         MovecraftDebugCraftDataTags.register();
 

@@ -14,16 +14,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.*;
 
 /**
  * A set of utilities for highlighting block changes in the world
  */
-public class HighlightUtil implements Listener {
+public class HighlightUtil {
 
     static {
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
@@ -136,12 +133,11 @@ public class HighlightUtil implements Listener {
         return packet;
     }
 
-    @EventHandler
-    public void onJoinEvent(PlayerJoinEvent event){
+    public static void callOnJoin(final Player player) {
         //if(disabled)
         //    return;
         for (ChatColor color : COLOR_TO_TEAM.keySet()) {
-            createTeam(color).sendPacket(event.getPlayer());
+            createTeam(color).sendPacket(player);
         }
     }
 }
