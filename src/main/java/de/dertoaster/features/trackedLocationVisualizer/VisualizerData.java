@@ -34,7 +34,7 @@ public class VisualizerData {
 
     public void setHighlightColor(final NamespacedKey key, ChatColor value) {
         if (backing.containsKey(key) && !backing.get(key).equals(value)) {
-            setHighlightColor(key, value);
+            backing.put(key, value);
         }
     }
 
