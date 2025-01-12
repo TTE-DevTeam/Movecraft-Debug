@@ -1,5 +1,6 @@
 package de.dertoaster.features.trackedLocationVisualizer;
 
+import de.dertoaster.CraftUtil;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
@@ -35,20 +36,9 @@ public class TrackedLocationVisualizerJob extends BukkitRunnable {
 
     private static void update(Map.Entry<Player, VisualizerData> playerVisualizerDataEntry) {
         playerVisualizerDataEntry.getValue().resetAllHighlights();
-        final PlayerCraft playerCraft = CraftManager.getInstance().getCraftByPlayer(playerVisualizerDataEntry.getKey());
-        if (playerCraft == null)
+        final Set<Craft> craftSet = CraftUtil.getRelevantCrafts(playerVisualizerDataEntry.getKey());
+        if (craftSet.isEmpty()) {
             return;
-        final Set<Craft> craftSet = Set.of(playerCraft);
-
-        for (Craft craft : CraftManager.getInstance().getCraftsInWorld(playerCraft.getWorld())) {
-            if (craft == playerCraft) {
-                continue;
-            }
-            if (craft instanceof SubCraft subCraft) {
-                if (subCraft.getParent() == playerCraft) {
-                    craftSet.add(craft);
-                }
-            }
         }
 
         craftSet.forEach(playerVisualizerDataEntry.getValue()::updateLocations);
