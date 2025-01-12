@@ -1,18 +1,14 @@
-package de.dertoaster.commands;
+package de.dertoaster.movecraftdebug.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import de.dertoaster.CraftUtil;
-import de.dertoaster.features.trackedLocationVisualizer.TrackedLocationVisualizerJob;
+import de.dertoaster.movecraftdebug.CraftUtil;
+import de.dertoaster.movecraftdebug.features.trackedLocationVisualizer.TrackedLocationVisualizerJob;
 import io.papermc.paper.command.brigadier.Commands;
-import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
-import net.countercraft.movecraft.craft.SubCraft;
 import net.kyori.adventure.text.Component;
 import net.minecraft.ChatFormatting;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.arguments.ColorArgument;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;

@@ -1,4 +1,4 @@
-package de.dertoaster;
+package de.dertoaster.movecraftdebug;
 
 
 import org.bukkit.Bukkit;

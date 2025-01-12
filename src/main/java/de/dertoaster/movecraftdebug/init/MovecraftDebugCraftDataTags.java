@@ -1,4 +1,4 @@
-package de.dertoaster.init;
+package de.dertoaster.movecraftdebug.init;
 
 public class MovecraftDebugCraftDataTags {
 

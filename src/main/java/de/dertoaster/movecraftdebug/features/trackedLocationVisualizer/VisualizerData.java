@@ -1,6 +1,6 @@
-package de.dertoaster.features.trackedLocationVisualizer;
+package de.dertoaster.movecraftdebug.features.trackedLocationVisualizer;
 
-import de.dertoaster.HighlightUtil;
+import de.dertoaster.movecraftdebug.HighlightUtil;
 import net.countercraft.movecraft.TrackedLocation;
 import net.countercraft.movecraft.craft.Craft;
 import org.bukkit.ChatColor;

@@ -1,6 +1,6 @@
-package de.dertoaster.listener;
+package de.dertoaster.movecraftdebug.listener;
 
-import de.dertoaster.HighlightUtil;
+import de.dertoaster.movecraftdebug.HighlightUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

@@ -1,10 +1,7 @@
-package de.dertoaster.features.trackedLocationVisualizer;
+package de.dertoaster.movecraftdebug.features.trackedLocationVisualizer;
 
-import de.dertoaster.CraftUtil;
+import de.dertoaster.movecraftdebug.CraftUtil;
 import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.CraftManager;
-import net.countercraft.movecraft.craft.PlayerCraft;
-import net.countercraft.movecraft.craft.SubCraft;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 

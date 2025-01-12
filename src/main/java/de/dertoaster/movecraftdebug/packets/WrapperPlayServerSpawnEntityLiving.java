@@ -1,4 +1,4 @@
-package de.dertoaster.packets;
+package de.dertoaster.movecraftdebug.packets;
 /**
  * PacketWrapper - ProtocolLib wrappers for Minecraft packets
  * Copyright (C) dmulloy2 <http://dmulloy2.net>
@@ -24,7 +24,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.injector.PacketConstructor;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import de.dertoaster.EntityIDUtil;
+import de.dertoaster.movecraftdebug.EntityIDUtil;
 import net.countercraft.movecraft.util.packets.Removed;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;

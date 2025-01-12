@@ -1,4 +1,4 @@
-package de.dertoaster.packets;
+package de.dertoaster.movecraftdebug.packets;
 
 /**
  * PacketWrapper - ProtocolLib wrappers for Minecraft packets

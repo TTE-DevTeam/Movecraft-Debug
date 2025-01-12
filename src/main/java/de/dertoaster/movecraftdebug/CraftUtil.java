@@ -1,4 +1,4 @@
-package de.dertoaster;
+package de.dertoaster.movecraftdebug;
 
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;

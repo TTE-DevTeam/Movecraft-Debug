@@ -1,14 +1,14 @@
-package de.dertoaster;
+package de.dertoaster.movecraftdebug;
 
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.google.common.primitives.Ints;
-import de.dertoaster.packets.WrapperPlayServerEntityDestroy;
-import de.dertoaster.packets.WrapperPlayServerEntityMetadata;
-import de.dertoaster.packets.WrapperPlayServerScoreboardTeam;
-import de.dertoaster.packets.WrapperPlayServerSpawnEntityLiving;
+import de.dertoaster.movecraftdebug.packets.WrapperPlayServerEntityDestroy;
+import de.dertoaster.movecraftdebug.packets.WrapperPlayServerEntityMetadata;
+import de.dertoaster.movecraftdebug.packets.WrapperPlayServerScoreboardTeam;
+import de.dertoaster.movecraftdebug.packets.WrapperPlayServerSpawnEntityLiving;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

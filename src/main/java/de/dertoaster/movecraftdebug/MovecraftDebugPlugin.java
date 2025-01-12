@@ -1,10 +1,10 @@
-package de.dertoaster;
+package de.dertoaster.movecraftdebug;
 
-import de.dertoaster.commands.VisualizerCommand;
-import de.dertoaster.features.trackedLocationVisualizer.TrackedLocationVisualizerJob;
-import de.dertoaster.init.MovecraftDebugCraftDataTags;
-import de.dertoaster.init.MovecraftDebugCraftTypeProperties;
-import de.dertoaster.listener.PlayerListener;
+import de.dertoaster.movecraftdebug.commands.VisualizerCommand;
+import de.dertoaster.movecraftdebug.features.trackedLocationVisualizer.TrackedLocationVisualizerJob;
+import de.dertoaster.movecraftdebug.init.MovecraftDebugCraftDataTags;
+import de.dertoaster.movecraftdebug.init.MovecraftDebugCraftTypeProperties;
+import de.dertoaster.movecraftdebug.listener.PlayerListener;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
