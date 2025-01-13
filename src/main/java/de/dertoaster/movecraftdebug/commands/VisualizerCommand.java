@@ -15,6 +15,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -72,7 +73,7 @@ public final class VisualizerCommand {
                                     .suggests((ctx, builder) -> {
                                         ctx.getSource().getSender();
                                         Player source = (Player) ctx.getSource().getSender();
-                                        Set<NamespacedKey> keys = Set.of();
+                                        Set<NamespacedKey> keys = new HashSet<>();
                                         CraftUtil.getRelevantCrafts(source).forEach(craft -> {
                                             keys.addAll(craft.getTrackedLocations().keySet());
                                         });
