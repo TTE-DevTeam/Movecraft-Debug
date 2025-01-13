@@ -8,6 +8,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -25,7 +26,7 @@ public class VisualizerData {
     public void enable(final NamespacedKey key, boolean value) {
         if (value) {
             this.backing.putIfAbsent(key, ChatColor.WHITE);
-            this.highlightEntityIDs.putIfAbsent(key, Set.of());
+            this.highlightEntityIDs.putIfAbsent(key, new HashSet<>());
         } else {
             this.backing.remove(key);
             this.highlightEntityIDs.remove(key);
@@ -74,7 +75,7 @@ public class VisualizerData {
             if (entityID == 0) {
                 continue;
             }
-            highlightEntityIDs.computeIfAbsent(key, k -> Set.of()).add(entityID);
+            highlightEntityIDs.computeIfAbsent(key, k -> new HashSet<>()).add(entityID);
         }
     }
 
