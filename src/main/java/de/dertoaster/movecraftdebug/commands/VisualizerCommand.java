@@ -74,11 +74,17 @@ public final class VisualizerCommand {
                                         Player source = (Player) ctx.getSource().getSender();
                                         Set<NamespacedKey> keys = Set.of();
                                         CraftUtil.getRelevantCrafts(source).forEach(craft -> {
-                                            keys.addAll(craft.getTrackedLocations().keySet());
+                                            if (craft.getTrackedLocations().size() > 0 && craft.getTrackedLocations().keySet().size() > 0) {
+                                                keys.addAll(craft.getTrackedLocations().keySet());
+                                            }
                                         });
-                                        keys.forEach(k -> {
-                                            builder.suggest(k.toString());
-                                        });
+                                        if (keys.size() > 0) {
+                                            keys.forEach(k -> {
+                                                builder.suggest(k.toString());
+                                            });
+                                        } else {
+                                            builder.suggest("No tracked locations yet!");
+                                        }
                                         return builder.buildFuture();
                                     })
                                     .executes(context -> {
