@@ -69,7 +69,7 @@ public final class VisualizerCommand {
                                 }
                                 return Command.SINGLE_SUCCESS;
                             })
-                            .then(Commands.argument("namespacedkey", StringArgumentType.word())
+                            .then(Commands.argument("namespacedkey", StringArgumentType.greedyString())
                                     .suggests((ctx, builder) -> {
                                         ctx.getSource().getSender();
                                         Player source = (Player) ctx.getSource().getSender();
