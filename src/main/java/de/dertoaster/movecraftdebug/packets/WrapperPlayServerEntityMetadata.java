@@ -1,100 +1,73 @@
-package de.dertoaster.movecraftdebug.packets; /**
- * PacketWrapper - ProtocolLib wrappers for Minecraft packets
- * Copyright (C) dmulloy2 <http://dmulloy2.net>
- * Copyright (C) Kristian S. Strangeland
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-import java.util.List;
-
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
+package de.dertoaster.movecraftdebug.packets;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 
+import java.util.List;
+
+/**
+ * Send by server to client to update the entity metadata for a previously spawned entity
+ */
 public class WrapperPlayServerEntityMetadata extends AbstractPacket {
-    public static final PacketType TYPE =
-            PacketType.Play.Server.ENTITY_METADATA;
 
+    /**
+     * The type of this packet
+     */
+    /**
+     * The packet type that is wrapped by this wrapper.
+     */
+    public static final PacketType TYPE = PacketType.Play.Server.ENTITY_METADATA;
+
+    /**
+     * Constructs a new wrapper and initialize it with a packet handle with default values
+     */
     public WrapperPlayServerEntityMetadata() {
-        super(new PacketContainer(TYPE), TYPE);
-        handle.getModifier().writeDefaults();
+        super(TYPE);
     }
 
+    /**
+     * Constructors a new wrapper for the specified packet
+     *
+     * @param packet the packet to wrap
+     */
     public WrapperPlayServerEntityMetadata(PacketContainer packet) {
         super(packet, TYPE);
     }
 
     /**
-     * Retrieve Entity ID.
-     * <p>
-     * Notes: entity's ID
+     * Gets the id of the entity for which to modify metadata
      *
-     * @return The current Entity ID
+     * @return entity id
      */
-    public int getEntityID() {
-        return handle.getIntegers().read(0);
+    public int getId() {
+        return this.handle.getIntegers().read(0);
     }
 
     /**
-     * Set Entity ID.
+     * Sets the id of the entity for which to modify metadata
      *
-     * @param value - new value.
+     * @param value entity id
      */
-    public void setEntityID(int value) {
-        handle.getIntegers().write(0, value);
+    public void setId(int value) {
+        this.handle.getIntegers().write(0, value);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Retrieves a list of metadata values to update
      *
-     * @param world - the current world of the entity.
-     * @return The spawned entity.
+     * @return 'packedItems' list of metadata values
      */
-    public Entity getEntity(World world) {
-        return handle.getEntityModifier(world).read(0);
+    public List<WrappedDataValue> getPackedItems() {
+        return this.handle.getDataValueCollectionModifier().read(0);
     }
 
     /**
-     * Retrieve the entity of the painting that will be spawned.
+     * Sets the list of metadata values to update
      *
-     * @param event - the packet event.
-     * @return The spawned entity.
+     * @param value List of metadata values
      */
-    public Entity getEntity(PacketEvent event) {
-        return getEntity(event.getPlayer().getWorld());
-    }
-
-    /**
-     * Retrieve Metadata.
-     *
-     * @return The current Metadata
-     */
-    public List<WrappedWatchableObject> getMetadata() {
-        return handle.getWatchableCollectionModifier().read(0);
-    }
-
-    /**
-     * Set Metadata.
-     *
-     * @param value - new value.
-     */
-    public void setMetadata(List<WrappedWatchableObject> value) {
-        handle.getWatchableCollectionModifier().write(0, value);
+    public void setPackedItems(List<WrappedDataValue> value) {
+        this.handle.getDataValueCollectionModifier().write(0, value);
     }
 }

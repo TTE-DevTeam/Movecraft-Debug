@@ -1,33 +1,25 @@
 package de.dertoaster.movecraftdebug.packets;
 
-/**
- * PacketWrapper - ProtocolLib wrappers for Minecraft packets
- * Copyright (C) dmulloy2 <http://dmulloy2.net>
- * Copyright (C) Kristian S. Strangeland
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.Converters;
+import it.unimi.dsi.fastutil.ints.IntList;
 
+/**
+ * Sent by the server to client to remove one or more entities.
+ */
 public class WrapperPlayServerEntityDestroy extends AbstractPacket {
+
+    /**
+     * The packet type that is wrapped by this wrapper.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.ENTITY_DESTROY;
 
+    /**
+     * Constructs a new wrapper and initialize it with a packet handle with default values
+     */
     public WrapperPlayServerEntityDestroy() {
-        super(new PacketContainer(TYPE), TYPE);
-        handle.getModifier().writeDefaults();
+        super(TYPE);
     }
 
     public WrapperPlayServerEntityDestroy(PacketContainer packet) {
@@ -35,34 +27,21 @@ public class WrapperPlayServerEntityDestroy extends AbstractPacket {
     }
 
     /**
-     * Retrieve Count.
-     * <p>
-     * Notes: length of following array
+     * Gets a list of entity ids to remove
      *
-     * @return The current Count
+     * @return 'entityIds' to remove
      */
-    public int getCount() {
-        return handle.getIntegerArrays().read(0).length;
+    public IntList getEntityIds() {
+        return this.handle.getModifier().withType(IntList.class, Converters.passthrough(IntList.class)).read(0);
     }
 
     /**
-     * Retrieve Entity IDs.
-     * <p>
-     * Notes: the list of entities of destroy
+     * Sets the list of entity ids to remove
      *
-     * @return The current Entity IDs
+     * @param value New value for field 'entityIds'
      */
-    public int[] getEntityIDs() {
-        return handle.getIntegerArrays().read(0);
-    }
-
-    /**
-     * Set Entity IDs.
-     *
-     * @param value - new value.
-     */
-    public void setEntityIds(int[] value) {
-        handle.getIntegerArrays().write(0, value);
+    public void setEntityIds(IntList value) {
+        this.handle.getModifier().withType(IntList.class, Converters.passthrough(IntList.class)).write(0, value);
     }
 
 }

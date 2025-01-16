@@ -1,17 +1,21 @@
 package de.dertoaster.movecraftdebug;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+import com.comphenix.protocol.wrappers.WrappedTeamParameters;
 import com.google.common.primitives.Ints;
 import de.dertoaster.movecraftdebug.packets.WrapperPlayServerEntityDestroy;
 import de.dertoaster.movecraftdebug.packets.WrapperPlayServerEntityMetadata;
 import de.dertoaster.movecraftdebug.packets.WrapperPlayServerScoreboardTeam;
-import de.dertoaster.movecraftdebug.packets.WrapperPlayServerSpawnEntityLiving;
+import de.dertoaster.movecraftdebug.packets.WrapperPlayServerSpawnEntity;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -41,26 +45,26 @@ public class HighlightUtil {
         if (!COLOR_TO_TEAM.containsKey(color)) {
             return 0;
         }
-        var packet = new WrapperPlayServerSpawnEntityLiving();
+        var packet = new WrapperPlayServerSpawnEntity();
         var id = new Random().nextInt();
         var uuid = UUID.randomUUID();
         packet.setX(location.getX() + .5);
         packet.setY(location.getY());
         packet.setZ(location.getZ() + .5);
         packet.setType(EntityType.MAGMA_CUBE);
-        packet.setEntityID(id);
-        packet.setUniqueId(uuid);
+        packet.setId(id);
+        packet.setUuid(uuid);
 
         // Create metadata
         var metadata = new WrapperPlayServerEntityMetadata();
-        metadata.setEntityID(id); // set id
+        metadata.setId(id); // set id
         var watcher = new WrappedDataWatcher(); //Create data watcher, the Entity Metadata packet requires this
         watcher.setEntity(player); //Set the new data watcher's target
         watcher.setObject(0, Registry.get(Byte.class), (byte) (GLOWING ^ INVISIBLE)); //Set status to glowing and invisible
         watcher.setObject(MOB_INDEX, Registry.get(Byte.class), NOAI);
         var slimeData = new WrappedDataWatcherObject(SLIME_INDEX, Registry.get(Integer.class));
         watcher.setObject(slimeData, 2);
-        metadata.setMetadata(watcher.getWatchableObjects());
+        metadata.setPackedItems(watcher.toDataValueCollection());
 //        var entity = packet.getEntity(location.getWorld());
 //        entity.setGlowing(true);
 //        if(!(entity instanceof LivingEntity)){
@@ -81,7 +85,7 @@ public class HighlightUtil {
         //if(disabled)
         //    return;
         var packet = new WrapperPlayServerEntityDestroy();
-        packet.setEntityIds(ids);
+        packet.setEntityIds(IntList.of(ids));
         packet.sendPacket(player);
     }
 
@@ -110,16 +114,28 @@ public class HighlightUtil {
             return null;
         }
 
-        var packet = new WrapperPlayServerScoreboardTeam();
-        packet.setName(name);
-        packet.setMode(WrapperPlayServerScoreboardTeam.Mode.TEAM_CREATED);
-        packet.setDisplayName(WrappedChatComponent.fromText(""));
-        packet.setNameTagVisibility("never");
-        packet.setCollisionRule("never");
-        //packet.setPrefix(WrappedChatComponent.fromText("§"+ color.getChar()));
-        packet.setSuffix(WrappedChatComponent.fromText(""));
-        //packet.setColor(color);
-        return packet;
+        WrapperPlayServerScoreboardTeam result = new WrapperPlayServerScoreboardTeam();
+
+        result.setMethod(WrapperPlayServerScoreboardTeam.Method.CREATE_TEAM.ordinal());
+        result.setName(name);
+
+        WrapperPlayServerScoreboardTeam.WrappedParameters teamParams = result.getParameters().orElse(new WrapperPlayServerScoreboardTeam.WrappedParameters());
+
+        teamParams.setColor(namedTextColorToColorCode(color).toBukkit());
+        teamParams.setDisplayName(WrappedChatComponent.fromText("-"));
+        teamParams.setPlayerPrefix(WrappedChatComponent.fromText("-"));
+        teamParams.setPlayerSuffix(WrappedChatComponent.fromText("-"));
+        teamParams.setCollisionRule("never");
+        teamParams.setNametagVisibility("always");
+        teamParams.setOptions(0x02);
+
+        result.setParameters(teamParams);
+
+        return result;
+    }
+
+    private static EnumWrappers.ChatFormatting namedTextColorToColorCode(final NamedTextColor color) {
+        return EnumWrappers.ChatFormatting.valueOf(color.toString().toUpperCase());
     }
 
     private static WrapperPlayServerScoreboardTeam addToTeam(UUID id, NamedTextColor teamColor) {
@@ -129,7 +145,7 @@ public class HighlightUtil {
         }
         var packet = new WrapperPlayServerScoreboardTeam();
         packet.setName(name);
-        packet.setMode(WrapperPlayServerScoreboardTeam.Mode.PLAYERS_ADDED);
+        packet.setMethod(WrapperPlayServerScoreboardTeam.Method.ADD_PLAYER.ordinal());
         packet.setPlayers(List.of(id.toString()));
         return packet;
     }
@@ -139,6 +155,16 @@ public class HighlightUtil {
         //    return;
         for (NamedTextColor color : NamedTextColor.NAMES.values()) {
             createTeam(color).sendPacket(player);
+        }
+    }
+
+    public static boolean trySend(PacketContainer packet, Player receiver) {
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(receiver, packet);
+            return true;
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return false;
         }
     }
 }

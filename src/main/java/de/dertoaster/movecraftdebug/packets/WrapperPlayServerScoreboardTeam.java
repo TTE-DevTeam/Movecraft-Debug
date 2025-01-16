@@ -1,276 +1,308 @@
-package de.dertoaster.movecraftdebug.packets; /**
- * PacketWrapper - ProtocolLib wrappers for Minecraft packets
- * Copyright (C) dmulloy2 <http://dmulloy2.net>
- * Copyright (C) Kristian S. Strangeland
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+package de.dertoaster.movecraftdebug.packets;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.EquivalentConverter;
+import com.comphenix.protocol.reflect.FuzzyReflection;
+import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.reflect.accessors.Accessors;
+import com.comphenix.protocol.reflect.accessors.ConstructorAccessor;
 import com.comphenix.protocol.utility.MinecraftReflection;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.*;
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import org.bukkit.ChatColor;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class WrapperPlayServerScoreboardTeam extends AbstractPacket {
-    public static final PacketType TYPE =
-            PacketType.Play.Server.SCOREBOARD_TEAM;
 
+    /**
+     * The packet type that is wrapped by this wrapper.
+     */
+    public static final PacketType TYPE = PacketType.Play.Server.SCOREBOARD_TEAM;
+
+    /**
+     * Constructs a new wrapper and initialize it with a packet handle with default values
+     */
     public WrapperPlayServerScoreboardTeam() {
-        super(new PacketContainer(TYPE), TYPE);
-        handle.getModifier().writeDefaults();
+        super(TYPE);
     }
 
+    /**
+     * Constructors a new wrapper for the specified packet
+     *
+     * @param packet the packet to wrap
+     */
     public WrapperPlayServerScoreboardTeam(PacketContainer packet) {
         super(packet, TYPE);
     }
 
+    public enum Method {
+        CREATE_TEAM,
+        REMOVE_TEAM,
+        UPDATE_TEAM_INFO,
+        ADD_PLAYER,
+        REMOVE_PLAYER
+    }
+
     /**
-     * Enum containing all known modes.
+     * Retrieves the index of the type of this operations
      *
-     * @author dmulloy2
+     * @return 'method'
      */
-    public static class Mode {
-        public static final int TEAM_CREATED = 0;
-        public static final int TEAM_REMOVED = 1;
-        public static final int TEAM_UPDATED = 2;
-        public static final int PLAYERS_ADDED = 3;
-        public static final int PLAYERS_REMOVED = 4;
+    public int getMethod() {
+        return this.handle.getIntegers().read(0);
+    }
 
-        private static final Mode INSTANCE = new Mode();
+    /**
+     * Retrieves the type of this operation
+     *
+     * @return type of operation
+     */
+    public Method getMethodEnum() {
+        return Method.values()[this.getMethod()];
+    }
 
-        public static Mode getInstance() {
-            return INSTANCE;
+    /**
+     * Sets the index of the type of this operation
+     *
+     * @param value New value for field 'method'
+     * @see WrapperPlayServerScoreboardTeam#setMethodEnum(Method)
+     */
+    public void setMethod(int value) {
+        this.handle.getIntegers().write(0, value);
+    }
+
+    /**
+     * Sets the type of this operation
+     *
+     * @param method The method
+     */
+    public void setMethodEnum(Method method) {
+        this.setMethod(method.ordinal());
+    }
+
+    /**
+     * Retrieves the value of field 'name'
+     *
+     * @return 'name'
+     */
+    public String getName() {
+        return this.handle.getStrings().read(0);
+    }
+
+    /**
+     * Sets the value of field 'name'
+     *
+     * @param value New value for field 'name'
+     */
+    public void setName(String value) {
+        this.handle.getStrings().write(0, value);
+    }
+
+    /**
+     * Retrieves the value of field 'players'
+     *
+     * @return 'players'
+     */
+    public List<String> getPlayers() {
+        return this.handle.getModifier().withType(Collection.class, BukkitConverters.getListConverter(Converters.passthrough(String.class))).read(0);
+    }
+
+    /**
+     * Sets the value of field 'players'
+     *
+     * @param value New value for field 'players'
+     */
+    public void setPlayers(List<String> value) {
+        this.handle.getModifier().withType(Collection.class, BukkitConverters.getListConverter(Converters.passthrough(String.class))).write(0, value);
+    }
+
+    /**
+     * Retrieves the value of field 'parameters'
+     *
+     * @return 'parameters'
+     */
+    public Optional<WrappedParameters> getParameters() {
+        return this.handle.getOptionals(WrappedParameters.CONVERTER).read(0);
+    }
+
+    /**
+     * Sets the value of field 'parameters'
+     *
+     * @param value New value for field 'parameters'
+     */
+    public void setParameters(@Nullable WrappedParameters value) {
+        this.handle.getOptionals(WrappedParameters.CONVERTER).write(0, Optional.ofNullable(value));
+    }
+
+    public static class WrappedParameters {
+        private final static Class<?> HANDLE_TYPE = MinecraftReflection.getMinecraftClass("network.protocol.game.ClientboundSetPlayerTeamPacket$Parameters", "network.protocol.game.PacketPlayOutScoreboardTeam$b");
+        private final static Class<?> COLOR_TYPE = MinecraftReflection.getMinecraftClass("ChatFormatting", "EnumChatFormat");
+        private final static Class<?> PLAYER_TEAM_TYPE = MinecraftReflection.getMinecraftClass("world.scores.PlayerTeam", "world.scores.ScoreboardTeam");
+        private final static ConstructorAccessor HANDLE_CONSTRUCTOR = Accessors.getConstructorAccessor(HANDLE_TYPE, PLAYER_TEAM_TYPE);
+        private final static ConstructorAccessor PLAYER_TEAM_CONSTRUCTOR = Accessors.getConstructorAccessor(FuzzyReflection.fromClass(PLAYER_TEAM_TYPE, false).getConstructors().iterator().next());
+
+        public static final EnumWrappers.IndexedEnumConverter<ChatColor> COLOR_CONVERTER = new EnumWrappers.IndexedEnumConverter(ChatColor.class, COLOR_TYPE);
+        final static EquivalentConverter<WrappedParameters> TO_SPECIFIC_CONVERTER = AutoWrapper.wrap(WrappedParameters.class, HANDLE_TYPE)
+                .field(0, BukkitConverters.getWrappedChatComponentConverter())
+                .field(1, BukkitConverters.getWrappedChatComponentConverter())
+                .field(2, BukkitConverters.getWrappedChatComponentConverter())
+                .field(5, COLOR_CONVERTER);
+        final static EquivalentConverter<WrappedParameters> CONVERTER = new EquivalentConverter<>() {
+            @Override
+            public Object getGeneric(WrappedParameters specific) {
+                Object playerTeamHandle = PLAYER_TEAM_CONSTRUCTOR.invoke(null, "dummy");
+                Object handle = HANDLE_CONSTRUCTOR.invoke(playerTeamHandle);
+                StructureModifier<?> modifier = new StructureModifier<>(HANDLE_TYPE).withTarget(handle);
+                modifier.withType(MinecraftReflection.getIChatBaseComponentClass(), BukkitConverters.getWrappedChatComponentConverter())
+                        .write(0, specific.displayName)
+                        .write(1, specific.playerPrefix)
+                        .write(2, specific.playerSuffix);
+                modifier.withType(String.class).write(0, specific.nametagVisibility)
+                        .write(1, specific.collisionRule);
+
+                modifier.withType(COLOR_TYPE, COLOR_CONVERTER).write(0, specific.color);
+                modifier.withType(int.class).write(0, specific.options);
+                return handle;
+            }
+
+            @Override
+            public WrappedParameters getSpecific(Object generic) {
+                return TO_SPECIFIC_CONVERTER.getSpecific(generic);
+            }
+
+            @Override
+            public Class<WrappedParameters> getSpecificType() {
+                return WrappedParameters.class;
+            }
+        };
+
+        private WrappedChatComponent displayName;
+        private WrappedChatComponent playerPrefix;
+        private WrappedChatComponent playerSuffix;
+        private String nametagVisibility;
+        private String collisionRule;
+        private ChatColor color;
+        private int options;
+
+        public WrappedParameters(WrappedChatComponent displayName, WrappedChatComponent playerPrefix, WrappedChatComponent playerSuffix, String nametagVisibility, String collisionRule, ChatColor color, int options) {
+            this.displayName = displayName;
+            this.playerPrefix = playerPrefix;
+            this.playerSuffix = playerSuffix;
+            this.nametagVisibility = nametagVisibility;
+            this.collisionRule = collisionRule;
+            this.color = color;
+            this.options = options;
+        }
+
+        public WrappedParameters() {
+        }
+
+        public WrappedChatComponent getDisplayName() {
+            return displayName;
+        }
+
+        public void setDisplayName(WrappedChatComponent displayName) {
+            this.displayName = displayName;
+        }
+
+        public WrappedChatComponent getPlayerPrefix() {
+            return playerPrefix;
+        }
+
+        public void setPlayerPrefix(WrappedChatComponent playerPrefix) {
+            this.playerPrefix = playerPrefix;
+        }
+
+        public WrappedChatComponent getPlayerSuffix() {
+            return playerSuffix;
+        }
+
+        public void setPlayerSuffix(WrappedChatComponent playerSuffix) {
+            this.playerSuffix = playerSuffix;
+        }
+
+        public String getNametagVisibility() {
+            return nametagVisibility;
+        }
+
+        public void setNametagVisibility(String nametagVisibility) {
+            this.nametagVisibility = nametagVisibility;
+        }
+
+        public String getCollisionRule() {
+            return collisionRule;
+        }
+
+        public void setCollisionRule(String collisionRule) {
+            this.collisionRule = collisionRule;
+        }
+
+        public ChatColor getColor() {
+            return color;
+        }
+
+        public void setColor(ChatColor color) {
+            this.color = color;
+        }
+
+        public int getOptions() {
+            return options;
+        }
+
+        public void setOptions(int options) {
+            this.options = options;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            WrappedParameters that = (WrappedParameters) o;
+
+            if (options != that.options) return false;
+            if (!Objects.equals(displayName, that.displayName)) return false;
+            if (!Objects.equals(playerPrefix, that.playerPrefix))
+                return false;
+            if (!Objects.equals(playerSuffix, that.playerSuffix))
+                return false;
+            if (!Objects.equals(nametagVisibility, that.nametagVisibility))
+                return false;
+            if (!Objects.equals(collisionRule, that.collisionRule))
+                return false;
+            return color == that.color;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = displayName != null ? displayName.hashCode() : 0;
+            result = 31 * result + (playerPrefix != null ? playerPrefix.hashCode() : 0);
+            result = 31 * result + (playerSuffix != null ? playerSuffix.hashCode() : 0);
+            result = 31 * result + (nametagVisibility != null ? nametagVisibility.hashCode() : 0);
+            result = 31 * result + (collisionRule != null ? collisionRule.hashCode() : 0);
+            result = 31 * result + (color != null ? color.hashCode() : 0);
+            result = 31 * result + options;
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "WrappedParameters{" +
+                    "displayName=" + displayName +
+                    ", playerPrefix=" + playerPrefix +
+                    ", playerSuffix=" + playerSuffix +
+                    ", nametagVisibility='" + nametagVisibility + '\'' +
+                    ", collisionRule='" + collisionRule + '\'' +
+                    ", color=" + color +
+                    ", options=" + options +
+                    '}';
         }
     }
 
-    /**
-     * Retrieve Team Name.
-     * <p>
-     * Notes: a unique name for the team. (Shared with scoreboard).
-     *
-     * @return The current Team Name
-     */
-    public String getName() {
-        return handle.getStrings().read(0);
-    }
-
-    /**
-     * Set Team Name.
-     *
-     * @param value - new value.
-     */
-    public void setName(String value) {
-        handle.getStrings().write(0, value);
-    }
-
-    /**
-     * Retrieve Team Display Name.
-     * <p>
-     * Notes: only if Mode = 0 or 2.
-     *
-     * @return The current Team Display Name
-     */
-    public WrappedChatComponent getDisplayName() {
-        return handle.getChatComponents().read(0);
-    }
-
-    /**
-     * Set Team Display Name.
-     *
-     * @param value - new value.
-     */
-    public void setDisplayName(WrappedChatComponent value) {
-        handle.getChatComponents().write(0, value);
-    }
-
-    /**
-     * Retrieve Team Prefix.
-     * <p>
-     * Notes: only if Mode = 0 or 2. Displayed before the players' name that are
-     * part of this team.
-     *
-     * @return The current Team Prefix
-     */
-    public WrappedChatComponent getPrefix() {
-        return handle.getChatComponents().read(1);
-    }
-
-    /**
-     * Set Team Prefix.
-     *
-     * @param value - new value.
-     */
-    public void setPrefix(WrappedChatComponent value) {
-        handle.getChatComponents().write(1, value);
-    }
-
-    /**
-     * Retrieve Team Suffix.
-     * <p>
-     * Notes: only if Mode = 0 or 2. Displayed after the players' name that are
-     * part of this team.
-     *
-     * @return The current Team Suffix
-     */
-    public WrappedChatComponent getSuffix() {
-        return handle.getChatComponents().read(2);
-    }
-
-    /**
-     * Set Team Suffix.
-     *
-     * @param value - new value.
-     */
-    public void setSuffix(WrappedChatComponent value) {
-        handle.getChatComponents().write(2, value);
-    }
-
-    /**
-     * Retrieve Name Tag Visibility.
-     * <p>
-     * Notes: only if Mode = 0 or 2. always, hideForOtherTeams, hideForOwnTeam,
-     * never.
-     *
-     * @return The current Name Tag Visibility
-     */
-    public String getNameTagVisibility() {
-        return handle.getStrings().read(1);
-    }
-
-    /**
-     * Set Name Tag Visibility.
-     *
-     * @param value - new value.
-     */
-    public void setNameTagVisibility(String value) {
-        handle.getStrings().write(1, value);
-    }
-
-    /**
-     * Retrieve Color.
-     * <p>
-     * Notes: only if Mode = 0 or 2. Same as Chat colors.
-     *
-     * @return The current Color
-     */
-    public ChatColor getColor() {
-        return handle.getEnumModifier(ChatColor.class, MinecraftReflection.getMinecraftClass("EnumChatFormat")).read(0);
-    }
-
-    /**
-     * Set Color.
-     *
-     * @param value - new value.
-     */
-    public void setColor(ChatColor value) {
-        handle.getEnumModifier(ChatColor.class, MinecraftReflection.getMinecraftClass("EnumChatFormat")).write(0, value);
-    }
-
-    /**
-     * Get the collision rule.
-     * Notes: only if Mode = 0 or 2. always, pushOtherTeams, pushOwnTeam, never.
-     * @return The current collision rule
-     */
-    public String getCollisionRule() {
-        return handle.getStrings().read(2);
-    }
-
-    /**
-     * Sets the collision rule.
-     * @param value - new value.
-     */
-    public void setCollisionRule(String value) {
-        handle.getStrings().write(2, value);
-    }
-
-    /**
-     * Retrieve Players.
-     * <p>
-     * Notes: only if Mode = 0 or 3 or 4. Players to be added/remove from the
-     * team. Max 40 characters so may be uuid's later
-     *
-     * @return The current Players
-     */
-    @SuppressWarnings("unchecked")
-    public List<String> getPlayers() {
-        return (List<String>) handle.getSpecificModifier(Collection.class)
-                .read(0);
-    }
-
-    /**
-     * Set Players.
-     *
-     * @param value - new value.
-     */
-    public void setPlayers(List<String> value) {
-        handle.getSpecificModifier(Collection.class).write(0, value);
-    }
-
-    /**
-     * Retrieve Mode.
-     * <p>
-     * Notes: if 0 then the team is created. If 1 then the team is removed. If 2
-     * the team team information is updated. If 3 then new players are added to
-     * the team. If 4 then players are removed from the team.
-     *
-     * @return The current Mode
-     */
-    public int getMode() {
-        return handle.getIntegers().read(0);
-    }
-
-    /**
-     * Set Mode.
-     *
-     * @param value - new value.
-     */
-    public void setMode(int value) {
-        handle.getIntegers().write(0, value);
-    }
-
-    /**
-     * Retrieve pack option data. Pack data is calculated as follows:
-     *
-     * <pre>
-     * <code>
-     * int data = 0;
-     * if (team.allowFriendlyFire()) {
-     *     data |= 1;
-     * }
-     * if (team.canSeeFriendlyInvisibles()) {
-     *     data |= 2;
-     * }
-     * </code>
-     * </pre>
-     *
-     * @return The current pack option data
-     */
-    public int getPackOptionData() {
-        return handle.getIntegers().read(1);
-    }
-
-    /**
-     * Set pack option data.
-     *
-     * @param value - new value
-     * @see #getPackOptionData()
-     */
-    public void setPackOptionData(int value) {
-        handle.getIntegers().write(1, value);
-    }
 }
