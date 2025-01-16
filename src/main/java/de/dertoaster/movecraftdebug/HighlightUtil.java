@@ -154,7 +154,8 @@ public class HighlightUtil {
         //if(disabled)
         //    return;
         for (NamedTextColor color : NamedTextColor.NAMES.values()) {
-            createTeam(color).sendPacket(player);
+            PacketHelper.sendTeamToPlayer(color, player);
+            //createTeam(color).sendPacket(player);
         }
     }
 
