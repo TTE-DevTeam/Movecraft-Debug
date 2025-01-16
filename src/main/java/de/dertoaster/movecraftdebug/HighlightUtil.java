@@ -9,6 +9,7 @@ import de.dertoaster.movecraftdebug.packets.WrapperPlayServerEntityDestroy;
 import de.dertoaster.movecraftdebug.packets.WrapperPlayServerEntityMetadata;
 import de.dertoaster.movecraftdebug.packets.WrapperPlayServerScoreboardTeam;
 import de.dertoaster.movecraftdebug.packets.WrapperPlayServerSpawnEntityLiving;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -34,7 +35,7 @@ public class HighlightUtil {
     private static final int MOB_INDEX = 14;
     private static final int SLIME_INDEX = 15;
 
-    public static int highlightBlockAt(Location location, Player player, final ChatColor color) {
+    public static int highlightBlockAt(Location location, Player player, final NamedTextColor color) {
         //if(disabled)
         //    return 0;
         if (!COLOR_TO_TEAM.containsKey(color)) {
@@ -84,26 +85,26 @@ public class HighlightUtil {
         packet.sendPacket(player);
     }
 
-    static final Map<ChatColor, String> COLOR_TO_TEAM = Map.ofEntries(
-            Map.entry(ChatColor.BLACK,        "mvcraft_hl_black"),
-            Map.entry(ChatColor.DARK_BLUE,    "mvcraft_hl_dblue"),
-            Map.entry(ChatColor.DARK_GREEN,   "mvcraft_hl_dgren"),
-            Map.entry(ChatColor.DARK_AQUA,    "mvcraft_hl_daqua"),
-            Map.entry(ChatColor.DARK_RED,     "mvcraft_hl_d_red"),
-            Map.entry(ChatColor.DARK_PURPLE,  "mvcraft_hl_dpurp"),
-            Map.entry(ChatColor.GOLD,         "mvcraft_hl_orang"),
-            Map.entry(ChatColor.GRAY,         "mvcraft_hl__gray"),
-            Map.entry(ChatColor.DARK_GRAY,    "mvcraft_hl_dgray"),
-            Map.entry(ChatColor.BLUE,         "mvcraft_hl__blue"),
-            Map.entry(ChatColor.GREEN,        "mvcraft_hl_green"),
-            Map.entry(ChatColor.AQUA,         "mvcraft_hl__aqua"),
-            Map.entry(ChatColor.RED,          "mvcraft_hl___red"),
-            Map.entry(ChatColor.LIGHT_PURPLE, "mvcraft_hl_lpurp"),
-            Map.entry(ChatColor.YELLOW,       "mvcraft_hl_yello"),
-            Map.entry(ChatColor.WHITE,        "mvcraft_hl_white")
+    static final Map<NamedTextColor, String> COLOR_TO_TEAM = Map.ofEntries(
+            Map.entry(NamedTextColor.BLACK,        "mvcraft_hl_black"),
+            Map.entry(NamedTextColor.DARK_BLUE,    "mvcraft_hl_dblue"),
+            Map.entry(NamedTextColor.DARK_GREEN,   "mvcraft_hl_dgren"),
+            Map.entry(NamedTextColor.DARK_AQUA,    "mvcraft_hl_daqua"),
+            Map.entry(NamedTextColor.DARK_RED,     "mvcraft_hl_d_red"),
+            Map.entry(NamedTextColor.DARK_PURPLE,  "mvcraft_hl_dpurp"),
+            Map.entry(NamedTextColor.GOLD,         "mvcraft_hl_orang"),
+            Map.entry(NamedTextColor.GRAY,         "mvcraft_hl__gray"),
+            Map.entry(NamedTextColor.DARK_GRAY,    "mvcraft_hl_dgray"),
+            Map.entry(NamedTextColor.BLUE,         "mvcraft_hl__blue"),
+            Map.entry(NamedTextColor.GREEN,        "mvcraft_hl_green"),
+            Map.entry(NamedTextColor.AQUA,         "mvcraft_hl__aqua"),
+            Map.entry(NamedTextColor.RED,          "mvcraft_hl___red"),
+            Map.entry(NamedTextColor.LIGHT_PURPLE, "mvcraft_hl_lpurp"),
+            Map.entry(NamedTextColor.YELLOW,       "mvcraft_hl_yello"),
+            Map.entry(NamedTextColor.WHITE,        "mvcraft_hl_white")
     );
 
-    private static WrapperPlayServerScoreboardTeam createTeam(ChatColor color){
+    private static WrapperPlayServerScoreboardTeam createTeam(NamedTextColor color){
         final String name = COLOR_TO_TEAM.getOrDefault(color, null);
         if (name == null) {
             return null;
@@ -115,13 +116,13 @@ public class HighlightUtil {
         packet.setDisplayName(WrappedChatComponent.fromText(""));
         packet.setNameTagVisibility("never");
         packet.setCollisionRule("never");
-        packet.setPrefix(WrappedChatComponent.fromText("§"+ color.getChar()));
+        //packet.setPrefix(WrappedChatComponent.fromText("§"+ color.getChar()));
         packet.setSuffix(WrappedChatComponent.fromText(""));
-        packet.setColor(color);
+        //packet.setColor(color);
         return packet;
     }
 
-    private static WrapperPlayServerScoreboardTeam addToTeam(UUID id, ChatColor teamColor) {
+    private static WrapperPlayServerScoreboardTeam addToTeam(UUID id, NamedTextColor teamColor) {
         String name = COLOR_TO_TEAM.getOrDefault(teamColor, null);
         if (name == null) {
             return null;
@@ -136,7 +137,7 @@ public class HighlightUtil {
     public static void callOnJoin(final Player player) {
         //if(disabled)
         //    return;
-        for (ChatColor color : COLOR_TO_TEAM.keySet()) {
+        for (NamedTextColor color : NamedTextColor.NAMES.values()) {
             createTeam(color).sendPacket(player);
         }
     }

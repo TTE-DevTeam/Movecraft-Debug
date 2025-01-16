@@ -5,13 +5,11 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import de.dertoaster.movecraftdebug.CraftUtil;
 import de.dertoaster.movecraftdebug.features.trackedLocationVisualizer.TrackedLocationVisualizerJob;
 import io.papermc.paper.command.brigadier.Commands;
-import io.papermc.paper.command.brigadier.argument.ArgumentTypes
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
 import net.kyori.adventure.text.Component;
-import net.minecraft.ChatFormatting;
-import net.minecraft.commands.arguments.ColorArgument;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -70,11 +68,7 @@ public final class VisualizerCommand {
                                 }
                                 return Command.SINGLE_SUCCESS;
                             })
-<<<<<<< HEAD
-                            .then(Commands.argument("namespacedkey", StringArgumentType.greedyString())
-=======
                             .then(Commands.argument("namespacedkey", ArgumentTypes.namespacedKey())
->>>>>>> 8f92ce0eb24c1d5937cd1e9f7d9a67d421c76356
                                     .suggests((ctx, builder) -> {
                                         ctx.getSource().getSender();
                                         Player source = (Player) ctx.getSource().getSender();
@@ -97,17 +91,15 @@ public final class VisualizerCommand {
                                         Player source = (Player) context.getSource().getSender();
 
                                         EOperation operation = EOperation.valueOf(context.getArgument("operation", String.class).toUpperCase());
-                                        NamespacedKey key = NamespacedKey.fromString(context.getArgument("namespacedkey", String.class));
+                                        NamespacedKey key = context.getArgument("namespacedkey", NamespacedKey.class);
 
                                         process(source, operation, key);
 
                                         return Command.SINGLE_SUCCESS;
                                     })
-                                    .then(Commands.argument("color", ColorArgument.color())
+                                    .then(Commands.argument("color", ArgumentTypes.namedColor())
                                             .suggests((ctx, builder) -> {
-                                                for (ChatColor chatColor : ChatColor.values()) {
-                                                    builder.suggest(chatColor.name().toLowerCase());
-                                                }
+                                                NamedTextColor.NAMES.keys().forEach(builder::suggest);
                                                 return builder.buildFuture();
                                             })
                                             .executes(context -> {
@@ -115,10 +107,9 @@ public final class VisualizerCommand {
 
                                                 EOperation operation = EOperation.valueOf(context.getArgument("operation", String.class).toUpperCase());
                                                 NamespacedKey key = NamespacedKey.fromString(context.getArgument("namespacedkey", String.class));
-                                                ChatFormatting color = context.getArgument("color", ChatFormatting.class);
-                                                ChatColor convertedColor = ChatColor.getByChar(color.code);
+                                                NamedTextColor color = context.getArgument("color", NamedTextColor.class);
 
-                                                process(source, operation, key, convertedColor);
+                                                process(source, operation, key, color);
 
                                                 return Command.SINGLE_SUCCESS;
                                             })
@@ -137,7 +128,7 @@ public final class VisualizerCommand {
         process(source, operation, key, null);
     }
 
-    private static void process(Player source, EOperation operation, NamespacedKey key, ChatColor color) {
+    private static void process(Player source, EOperation operation, NamespacedKey key, NamedTextColor color) {
         switch(operation) {
             case REMOVE -> TrackedLocationVisualizerJob.getSettingsFor(source).enable(key, false);
             case ADD -> TrackedLocationVisualizerJob.getSettingsFor(source).enable(key, true);

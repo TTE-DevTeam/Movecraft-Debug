@@ -3,6 +3,7 @@ package de.dertoaster.movecraftdebug.features.trackedLocationVisualizer;
 import de.dertoaster.movecraftdebug.HighlightUtil;
 import net.countercraft.movecraft.TrackedLocation;
 import net.countercraft.movecraft.craft.Craft;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ import java.util.WeakHashMap;
 public class VisualizerData {
 
     private final WeakReference<Player> playerReference;
-    private final Map<NamespacedKey, ChatColor> backing = new WeakHashMap<>();
+    private final Map<NamespacedKey, NamedTextColor> backing = new WeakHashMap<>();
     private final Map<NamespacedKey, Set<Integer>> highlightEntityIDs = new WeakHashMap<>();
 
     public VisualizerData(final Player player) {
@@ -25,7 +26,7 @@ public class VisualizerData {
 
     public void enable(final NamespacedKey key, boolean value) {
         if (value) {
-            this.backing.putIfAbsent(key, ChatColor.WHITE);
+            this.backing.putIfAbsent(key, NamedTextColor.WHITE);
             this.highlightEntityIDs.putIfAbsent(key, new HashSet<>());
         } else {
             this.backing.remove(key);
@@ -33,7 +34,7 @@ public class VisualizerData {
         }
     }
 
-    public void setHighlightColor(final NamespacedKey key, ChatColor value) {
+    public void setHighlightColor(final NamespacedKey key, NamedTextColor value) {
         if (backing.containsKey(key) && !backing.get(key).equals(value)) {
             backing.put(key, value);
         }
@@ -51,7 +52,7 @@ public class VisualizerData {
         }
     }
 
-    public void setHighlightColor(NamespacedKey key, ChatColor color, Craft craft) {
+    public void setHighlightColor(NamespacedKey key, NamedTextColor color, Craft craft) {
         if (this.backing.containsKey(key)) {
             resetHighlights(key);
         }
@@ -65,7 +66,7 @@ public class VisualizerData {
         if (this.playerReference.get() == null) {
             return;
         }
-        ChatColor color = backing.getOrDefault(key, null);
+        NamedTextColor color = backing.getOrDefault(key, null);
         if (color == null) {
             return;
         }
