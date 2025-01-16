@@ -106,7 +106,7 @@ public final class VisualizerCommand {
                                                 Player source = (Player) context.getSource().getSender();
 
                                                 EOperation operation = EOperation.valueOf(context.getArgument("operation", String.class).toUpperCase());
-                                                NamespacedKey key = NamespacedKey.fromString(context.getArgument("namespacedkey", String.class));
+                                                NamespacedKey key = context.getArgument("namespacedkey", NamespacedKey.class);
                                                 NamedTextColor color = context.getArgument("color", NamedTextColor.class);
 
                                                 process(source, operation, key, color);
