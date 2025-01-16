@@ -45,35 +45,7 @@ public class HighlightUtil {
         if (!COLOR_TO_TEAM.containsKey(color)) {
             return 0;
         }
-        var packet = new WrapperPlayServerSpawnEntity();
-        var id = new Random().nextInt();
-        var uuid = UUID.randomUUID();
-        packet.setX(location.getX() + .5);
-        packet.setY(location.getY());
-        packet.setZ(location.getZ() + .5);
-        packet.setType(EntityType.MAGMA_CUBE);
-        packet.setId(id);
-        packet.setUuid(uuid);
-
-        // Create metadata
-        var metadata = new WrapperPlayServerEntityMetadata();
-        metadata.setId(id); // set id
-        var watcher = new WrappedDataWatcher(); //Create data watcher, the Entity Metadata packet requires this
-        watcher.setEntity(player); //Set the new data watcher's target
-        watcher.setObject(0, Registry.get(Byte.class), (byte) (GLOWING ^ INVISIBLE)); //Set status to glowing and invisible
-        watcher.setObject(MOB_INDEX, Registry.get(Byte.class), NOAI);
-        var slimeData = new WrappedDataWatcherObject(SLIME_INDEX, Registry.get(Integer.class));
-        watcher.setObject(slimeData, 2);
-        metadata.setPackedItems(watcher.toDataValueCollection());
-//        var entity = packet.getEntity(location.getWorld());
-//        entity.setGlowing(true);
-//        if(!(entity instanceof LivingEntity)){
-//            throw new IllegalStateException(entity + " must be magma cube, but was not.");
-//        }
-//        ((LivingEntity) entity).setInvisible(true);
-        packet.sendPacket(player);
-        metadata.sendPacket(player);
-        addToTeam(uuid, color).sendPacket(player);
+        int id = PacketHelper.sendCreateLivingEntity(location, color, player);
         return id;
     }
 
@@ -84,9 +56,7 @@ public class HighlightUtil {
     public static void removeHighlights(int[] ids, Player player){
         //if(disabled)
         //    return;
-        var packet = new WrapperPlayServerEntityDestroy();
-        packet.setEntityIds(IntList.of(ids));
-        packet.sendPacket(player);
+        PacketHelper.sendRemoveEntity(ids, player);
     }
 
     static final Map<NamedTextColor, String> COLOR_TO_TEAM = Map.ofEntries(
@@ -108,36 +78,6 @@ public class HighlightUtil {
             Map.entry(NamedTextColor.WHITE,        "mvcraft_hl_white")
     );
 
-    private static WrapperPlayServerScoreboardTeam createTeam(NamedTextColor color){
-        final String name = COLOR_TO_TEAM.getOrDefault(color, null);
-        if (name == null) {
-            return null;
-        }
-
-        WrapperPlayServerScoreboardTeam result = new WrapperPlayServerScoreboardTeam();
-
-        result.setMethod(WrapperPlayServerScoreboardTeam.Method.CREATE_TEAM.ordinal());
-        result.setName(name);
-
-        WrapperPlayServerScoreboardTeam.WrappedParameters teamParams = result.getParameters().orElse(new WrapperPlayServerScoreboardTeam.WrappedParameters());
-
-        teamParams.setColor(namedTextColorToColorCode(color).toBukkit());
-        teamParams.setDisplayName(WrappedChatComponent.fromText("-"));
-        teamParams.setPlayerPrefix(WrappedChatComponent.fromText("-"));
-        teamParams.setPlayerSuffix(WrappedChatComponent.fromText("-"));
-        teamParams.setCollisionRule("never");
-        teamParams.setNametagVisibility("always");
-        teamParams.setOptions(0x02);
-
-        result.setParameters(teamParams);
-
-        return result;
-    }
-
-    private static EnumWrappers.ChatFormatting namedTextColorToColorCode(final NamedTextColor color) {
-        return EnumWrappers.ChatFormatting.valueOf(color.toString().toUpperCase());
-    }
-
     private static WrapperPlayServerScoreboardTeam addToTeam(UUID id, NamedTextColor teamColor) {
         String name = COLOR_TO_TEAM.getOrDefault(teamColor, null);
         if (name == null) {
@@ -155,17 +95,7 @@ public class HighlightUtil {
         //    return;
         for (NamedTextColor color : NamedTextColor.NAMES.values()) {
             PacketHelper.sendTeamToPlayer(color, player);
-            //createTeam(color).sendPacket(player);
         }
     }
 
-    public static boolean trySend(PacketContainer packet, Player receiver) {
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(receiver, packet);
-            return true;
-        } catch(Exception ex) {
-            ex.printStackTrace();
-            return false;
-        }
-    }
 }
