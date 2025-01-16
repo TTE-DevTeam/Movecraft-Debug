@@ -103,7 +103,7 @@ public class PacketHelper {
                 )
 
         );
-        sendPacket(receiver, dataPacket);
+        //sendPacket(receiver, dataPacket);
 
         sendAddToTeam(uuid, teamColor, receiver);
         return entityID;
