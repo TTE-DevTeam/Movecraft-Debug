@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import de.dertoaster.movecraftdebug.CraftUtil;
 import de.dertoaster.movecraftdebug.features.trackedLocationVisualizer.TrackedLocationVisualizerJob;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
 import net.kyori.adventure.text.Component;
@@ -69,7 +70,11 @@ public final class VisualizerCommand {
                                 }
                                 return Command.SINGLE_SUCCESS;
                             })
+<<<<<<< HEAD
                             .then(Commands.argument("namespacedkey", StringArgumentType.greedyString())
+=======
+                            .then(Commands.argument("namespacedkey", ArgumentTypes.namespacedKey())
+>>>>>>> 8f92ce0eb24c1d5937cd1e9f7d9a67d421c76356
                                     .suggests((ctx, builder) -> {
                                         ctx.getSource().getSender();
                                         Player source = (Player) ctx.getSource().getSender();
