@@ -2,6 +2,7 @@ package de.dertoaster.movecraftdebug.listener;
 
 import de.dertoaster.movecraftdebug.init.MovecraftDebugTrackedLocations;
 import net.countercraft.movecraft.TrackedLocation;
+import net.countercraft.movecraft.craft.SubCraft;
 import net.countercraft.movecraft.events.CraftDetectEvent;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
@@ -15,6 +16,9 @@ public class MovecraftListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onCraftDetect(CraftDetectEvent event) {
+        if (event.getCraft() instanceof SubCraft subCraft && subCraft.getParent() != null) {
+            return;
+        }
         event.getCraft().getHitBox().forEach(movecraftLocation -> {
             Block block = movecraftLocation.toBukkit(event.getCraft().getWorld()).getBlock();
             if (block.getState() instanceof Dispenser) {
