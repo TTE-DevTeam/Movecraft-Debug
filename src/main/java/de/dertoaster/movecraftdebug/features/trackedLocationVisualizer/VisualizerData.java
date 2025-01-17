@@ -79,6 +79,7 @@ public class VisualizerData {
                 highlightedBlocks.computeIfAbsent(key, k -> new HashSet<>()).add(location);
             }
         } catch(ReflectiveOperationException ex) {
+            resetHighlights(key);
             return;
         }
     }
