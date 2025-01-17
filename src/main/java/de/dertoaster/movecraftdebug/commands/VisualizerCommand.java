@@ -10,6 +10,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -129,10 +130,11 @@ public final class VisualizerCommand {
     }
 
     private static void process(Player source, EOperation operation, NamespacedKey key, NamedTextColor color) {
+        ChatColor chatColor = color == null ? ChatColor.WHITE : ChatColor.valueOf(color.toString().toUpperCase());
         switch(operation) {
             case REMOVE -> TrackedLocationVisualizerJob.getSettingsFor(source).enable(key, false);
             case ADD -> TrackedLocationVisualizerJob.getSettingsFor(source).enable(key, true);
-            case COLOR -> TrackedLocationVisualizerJob.getSettingsFor(source).setHighlightColor(key, color);
+            case COLOR -> TrackedLocationVisualizerJob.getSettingsFor(source).setHighlightColor(key, chatColor);
         }
     }
 

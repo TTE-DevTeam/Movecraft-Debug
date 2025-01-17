@@ -39,6 +39,7 @@ dependencies {
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
     compileOnly("net.countercraft:movecraft:+") // Movecraft dependency (latest version)
     compileOnly("it.unimi.dsi:fastutil:8.5.11")
+    compileOnly("fr.skytasul:glowingentities:1.4.3")
 }
 
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION

@@ -1,7 +1,11 @@
 name: Movecraft-Debug
 version: '1.0'
 main: de.dertoaster.movecraftdebug.MovecraftDebugPlugin
+loader: de.dertoaster.movecraftdebug.init.MovecraftDebugPluginLoader
 api-version: '1.21'
+
+#libraries:
+#  - fr.skytasul:glowingentities:1.4.3
 dependencies:
   #bootstrap:
     # Let's say that RegistryPlugin registers some data that your plugin needs to use
@@ -12,11 +16,6 @@ dependencies:
       #required: true
       #join-classpath: true # Defaults to true
   server:
-    # Add a required "RequiredPlugin" dependency, which will load AFTER your plugin.
-    ProtocolLib:
-      load: BEFORE
-      required: true
-      join-classpath: true
     Movecraft:
       load: BEFORE
       required: true

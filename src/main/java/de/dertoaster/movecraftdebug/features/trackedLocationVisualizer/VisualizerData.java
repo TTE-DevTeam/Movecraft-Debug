@@ -3,8 +3,8 @@ package de.dertoaster.movecraftdebug.features.trackedLocationVisualizer;
 import de.dertoaster.movecraftdebug.HighlightUtil;
 import net.countercraft.movecraft.TrackedLocation;
 import net.countercraft.movecraft.craft.Craft;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
@@ -17,8 +17,8 @@ import java.util.WeakHashMap;
 public class VisualizerData {
 
     private final WeakReference<Player> playerReference;
-    private final Map<NamespacedKey, NamedTextColor> backing = new WeakHashMap<>();
-    private final Map<NamespacedKey, Set<Integer>> highlightEntityIDs = new WeakHashMap<>();
+    private final Map<NamespacedKey, ChatColor> backing = new WeakHashMap<>();
+    private final Map<NamespacedKey, Set<Location>> highlightedBlocks = new WeakHashMap<>();
 
     public VisualizerData(final Player player) {
         this.playerReference = new WeakReference<Player>(player);
@@ -26,15 +26,15 @@ public class VisualizerData {
 
     public void enable(final NamespacedKey key, boolean value) {
         if (value) {
-            this.backing.putIfAbsent(key, NamedTextColor.WHITE);
-            this.highlightEntityIDs.putIfAbsent(key, new HashSet<>());
+            this.backing.putIfAbsent(key, ChatColor.WHITE);
+            this.highlightedBlocks.putIfAbsent(key, new HashSet<>());
         } else {
             this.backing.remove(key);
-            this.highlightEntityIDs.remove(key);
+            this.highlightedBlocks.remove(key);
         }
     }
 
-    public void setHighlightColor(final NamespacedKey key, NamedTextColor value) {
+    public void setHighlightColor(final NamespacedKey key, ChatColor value) {
         if (backing.containsKey(key) && !backing.get(key).equals(value)) {
             backing.put(key, value);
         }
@@ -47,12 +47,12 @@ public class VisualizerData {
     }
 
     public void resetAllHighlights() {
-        for (NamespacedKey key : highlightEntityIDs.keySet()) {
+        for (NamespacedKey key : highlightedBlocks.keySet()) {
             resetHighlights(key);
         }
     }
 
-    public void setHighlightColor(NamespacedKey key, NamedTextColor color, Craft craft) {
+    public void setHighlightColor(NamespacedKey key, ChatColor color, Craft craft) {
         if (this.backing.containsKey(key)) {
             resetHighlights(key);
         }
@@ -66,17 +66,19 @@ public class VisualizerData {
         if (this.playerReference.get() == null) {
             return;
         }
-        NamedTextColor color = backing.getOrDefault(key, null);
+        ChatColor color = backing.getOrDefault(key, null);
         if (color == null) {
             return;
         }
 
-        for (TrackedLocation trackedLocation : craft.getTrackedLocations().getOrDefault(key, Set.of())) {
-            int entityID = HighlightUtil.highlightBlockAt(trackedLocation.getAbsoluteLocation().toBukkit(craft.getWorld()), this.playerReference.get(), color);
-            if (entityID == 0) {
-                continue;
+        try {
+            for (TrackedLocation trackedLocation : craft.getTrackedLocations().getOrDefault(key, Set.of())) {
+                final Location location = trackedLocation.getAbsoluteLocation().toBukkit(craft.getWorld());
+                HighlightUtil.highlightBlockAt(location, this.playerReference.get(), color);
+                highlightedBlocks.computeIfAbsent(key, k -> new HashSet<>()).add(location);
             }
-            highlightEntityIDs.computeIfAbsent(key, k -> new HashSet<>()).add(entityID);
+        } catch(ReflectiveOperationException ex) {
+            return;
         }
     }
 
@@ -84,9 +86,13 @@ public class VisualizerData {
         if (this.playerReference.get() == null) {
             return;
         }
-        if (highlightEntityIDs.containsKey(key)) {
-            HighlightUtil.removeHighlights(highlightEntityIDs.get(key), playerReference.get());
-            highlightEntityIDs.get(key).clear();
+        if (highlightedBlocks.containsKey(key)) {
+            try {
+                HighlightUtil.removeHighlights(highlightedBlocks.get(key), playerReference.get());
+            } catch(ReflectiveOperationException ex) {
+                // Ignore
+            }
+            highlightedBlocks.get(key).clear();
         }
     }
 
