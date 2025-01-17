@@ -9,29 +9,27 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
 import java.lang.ref.WeakReference;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public class VisualizerData {
 
     private final WeakReference<Player> playerReference;
-    private final Map<NamespacedKey, ChatColor> backing = new WeakHashMap<>();
-    private final Map<NamespacedKey, Set<Location>> highlightedBlocks = new WeakHashMap<>();
+    private final Map<NamespacedKey, ChatColor> backing = new HashMap<>();
+    private final Map<NamespacedKey, Set<Location>> highlightedBlocks = new HashMap<>();
 
     public VisualizerData(final Player player) {
         this.playerReference = new WeakReference<Player>(player);
     }
 
-    public void enable(final NamespacedKey key, boolean value) {
-        if (value) {
-            this.backing.putIfAbsent(key, ChatColor.WHITE);
-            this.highlightedBlocks.putIfAbsent(key, new HashSet<>());
-        } else {
-            this.backing.remove(key);
-            this.highlightedBlocks.remove(key);
-        }
+    public void disable(final NamespacedKey key) {
+        this.resetHighlights(key);
+        this.backing.remove(key);
+        this.highlightedBlocks.remove(key);
+    }
+
+    public void enable(final NamespacedKey key, ChatColor color) {
+        this.backing.putIfAbsent(key, color == null ? ChatColor.WHITE : color);
+        this.highlightedBlocks.putIfAbsent(key, new HashSet<>());
     }
 
     public void setHighlightColor(final NamespacedKey key, ChatColor value) {

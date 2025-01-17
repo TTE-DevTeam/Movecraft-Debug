@@ -22,9 +22,8 @@ import java.util.Set;
 public final class VisualizerCommand {
 
     static enum EOperation {
-        ADD,
+        SET,
         REMOVE,
-        COLOR
     }
 
     public static void register(final Commands commands) {
@@ -132,9 +131,8 @@ public final class VisualizerCommand {
     private static void process(Player source, EOperation operation, NamespacedKey key, NamedTextColor color) {
         ChatColor chatColor = color == null ? ChatColor.WHITE : ChatColor.valueOf(color.toString().toUpperCase());
         switch(operation) {
-            case REMOVE -> TrackedLocationVisualizerJob.getSettingsFor(source).enable(key, false);
-            case ADD -> TrackedLocationVisualizerJob.getSettingsFor(source).enable(key, true);
-            case COLOR -> TrackedLocationVisualizerJob.getSettingsFor(source).setHighlightColor(key, chatColor);
+            case REMOVE -> TrackedLocationVisualizerJob.getSettingsFor(source).disable(key);
+            case SET -> TrackedLocationVisualizerJob.getSettingsFor(source).enable(key, chatColor);
         }
     }
 
