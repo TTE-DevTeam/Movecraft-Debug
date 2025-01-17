@@ -28,6 +28,9 @@ public class VisualizerData {
     }
 
     public void enable(final NamespacedKey key, ChatColor color) {
+        if (backing.containsKey(key)) {
+            disable(key);
+        }
         this.backing.putIfAbsent(key, color == null ? ChatColor.WHITE : color);
         this.highlightedBlocks.putIfAbsent(key, new HashSet<>());
     }
